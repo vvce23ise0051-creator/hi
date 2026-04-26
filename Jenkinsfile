@@ -16,11 +16,15 @@ pipeline {
         stage('Login to DockerHub') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'dockerr-creds',
+                    credentialsId: 'dockerr-cred',   // ✅ FIXED NAME
                     usernameVariable: 'USER',
                     passwordVariable: 'PASS'
                 )]) {
-                    bat 'echo %PASS% | docker login -u %USER% --password-stdin'
+                    bat '''
+                    echo %PASS%> pass.txt
+                    type pass.txt | docker login -u %USER% --password-stdin
+                    del pass.txt
+                    '''
                 }
             }
         }
